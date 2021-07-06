@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ufrn.tads.erick.petapi.DAO.ProdutoDAO;
 import ufrn.tads.erick.petapi.model.Produto;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
