@@ -1,24 +1,30 @@
 package ufrn.tads.erick.petapi.controllers;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ufrn.tads.erick.petapi.DAO.ProdutoDAO;
 import ufrn.tads.erick.petapi.model.Produto;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 public class ClienteController {
+    List<Produto> carrinho = new ArrayList<>();
+
     @GetMapping(value = "/cliente")
     public void getCliente(HttpServletRequest request, HttpServletResponse response) throws IOException {
         ProdutoDAO pdao = new ProdutoDAO();
-
         response.getWriter().println("<table>");
 
         response.getWriter().println("<tr>");
@@ -40,25 +46,47 @@ public class ClienteController {
             response.getWriter().println("<th>" + p.getEspecie() + "</th>");
             response.getWriter().println("<th>" + p.getMarca() + "</th>");
             response.getWriter().println("<th>" + p.getCategoria() + "</th>");
-            response.getWriter().println("<th> <a href=\"adicionarcarrinho?id=" + pdao.listarProdutos().get(i).getId()
+            response.getWriter().println("<th> <a href=\"adicionarCarrinho?id=" + pdao.listarProdutos().get(i).getId()
                     + " \" >Adicionar<a/></th>");
             response.getWriter().println("</tr>");
             i++;
         }
+
         response.getWriter().println("</table>");
         response.getWriter().println("<a href=\"/verCarrinho\">Ver carrinho</a>");
-
     }
 
-    @GetMapping(value = "/adicionarcarrinho")
+    @GetMapping(value = "/adicionarCarrinho")
     public void getAdicionarCarrinho(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
+        HttpSession s = request.getSession();
         if (request.getParameter("id") != null) {
-            RequestDispatcher encaminhar = request.getRequestDispatcher("/");
-            encaminhar.forward(request, response);
-        } else {
-            response.sendRedirect("/cliente");
-        }
+
+            int id = Integer.parseInt(request.getParameter("id"));
+            ProdutoDAO pdao = new ProdutoDAO();
+
+            for (Produto p : pdao.listarProdutosPorId(id)) {
+                carrinho.add(p);
+            }
+            for (Produto p : carrinho) {
+                response.getWriter().println(p.getId() + " - " + p.getNome());
+            }
+        }             
+        s.setAttribute("carrinho", carrinho);
+        RequestDispatcher encaminhar = request.getRequestDispatcher("/cliente");
+        encaminhar.forward(request, response);
     }
 
+    @GetMapping(value="/verCarrinho")
+    public void getVerCarrinho(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        HttpSession s = request.getSession();
+        List<Produto> carrinhoSession = (List<Produto>) s.getAttribute("carrinho");
+        if (carrinhoSession != null) {
+            // JSONObject myObject = new JSONObject(result);
+            for (Produto p : carrinhoSession) {
+                response.getWriter().println(p.getId() + " - " + p.getNome());
+            }
+        }
+    }
+    
 }

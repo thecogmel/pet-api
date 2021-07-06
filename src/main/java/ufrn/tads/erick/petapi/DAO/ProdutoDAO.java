@@ -49,6 +49,45 @@ public class ProdutoDAO {
         return listaDeProdutos;
     }
 
+    public List<Produto> listarProdutosPorId(int id) {
+
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        List<Produto> listaDeProdutos = new ArrayList<>();
+
+        try {
+            connection = ConectaBanco.getConnection();
+
+            stmt = connection.prepareStatement("select * from produto where id=?");
+
+            stmt.setInt(1, id);
+
+            rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                Produto p = new Produto();
+
+                p.setId(rs.getInt("id"));
+                p.setNome(rs.getString("nome"));
+                p.setRaca(rs.getString("raca"));
+                p.setPreco(rs.getFloat("preco"));
+                p.setEspecie(rs.getString("especie"));
+                p.setMarca(rs.getString("marca"));
+                p.setCategoria(rs.getString("categoria"));
+
+                listaDeProdutos.add(p);
+
+            }
+
+        } catch (SQLException | URISyntaxException ex) {
+            //response.getWriter().append("Connection Failed! Check output console");
+        }
+
+        return listaDeProdutos;
+    }
+
     public void cadastrarProduto(Produto p) {
         Connection connection = null;
         PreparedStatement stmt = null;
