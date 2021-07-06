@@ -37,6 +37,8 @@ public class ConfigController {
 
       stmt.execute();
 
+      con.close();
+
       return new String("ok");
 
     } catch (SQLException | URISyntaxException ex) {

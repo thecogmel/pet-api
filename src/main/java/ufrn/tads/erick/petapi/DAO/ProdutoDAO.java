@@ -42,6 +42,7 @@ public class ProdutoDAO {
 
             }
 
+            connection.close();
         } catch (SQLException | URISyntaxException ex) {
             // response.getWriter().append("Connection Failed! Check output console");
         }
@@ -81,6 +82,8 @@ public class ProdutoDAO {
 
             }
 
+            connection.close();
+
         } catch (SQLException | URISyntaxException ex) {
             //response.getWriter().append("Connection Failed! Check output console");
         }
@@ -106,6 +109,8 @@ public class ProdutoDAO {
             stmt.setString(6, p.getCategoria());
 
             stmt.executeUpdate();
+
+            connection.close();
 
         } catch (SQLException | URISyntaxException ex) {
             // response.getWriter().append("Connection Failed! Check output console");
