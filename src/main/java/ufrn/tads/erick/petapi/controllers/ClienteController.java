@@ -70,7 +70,7 @@ public class ClienteController {
             for (Produto p : carrinho) {
                 response.getWriter().println(p.getId() + " - " + p.getNome());
             }
-        }             
+        }
         s.setAttribute("carrinho", carrinho);
         RequestDispatcher encaminhar = request.getRequestDispatcher("/cliente");
         encaminhar.forward(request, response);
@@ -80,11 +80,28 @@ public class ClienteController {
     public void getVerCarrinho(HttpServletRequest request, HttpServletResponse response) throws IOException {
         HttpSession s = request.getSession();
         List<Produto> carrinhoSession = (List<Produto>) s.getAttribute("carrinho");
+        response.getWriter().println("<html>");
+        response.getWriter().println("<body>");
         if (carrinhoSession != null) {
             // JSONObject myObject = new JSONObject(result);
             for (Produto p : carrinhoSession) {
                 response.getWriter().println(p.getId() + " - " + p.getNome());
+                response.getWriter().println("<br/>");
             }
+        } else {
+            response.sendRedirect("/cliente");
+        }
+        response.getWriter().println("<a href=\"/finalizarCompra\">Finalizar Compra</a>");
+        response.getWriter().println("</body>");
+        response.getWriter().println("</html>");
+    }
+    
+    @GetMapping(value="/finalizarCompra")
+    public void getFinish(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        HttpSession s = request.getSession(false);
+        if (s != null) {
+            s.invalidate();
+            response.sendRedirect("index.html");
         }
     }
     
